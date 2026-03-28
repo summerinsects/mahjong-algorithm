@@ -1026,47 +1026,47 @@ bool is_honors_and_knitted_tiles_win(const tile_t *standing_tiles, intptr_t stan
 //-------------------------------- 所有情况综合 --------------------------------
 
 bool is_waiting(const hand_tiles_t &hand_tiles, useful_table_t *useful_table) {
-    bool spcial_waiting = false, basic_waiting = false;
-    useful_table_t table_special, table_basic;
+    bool special_waiting = false, regular_waiting = false;
+    useful_table_t table_special, table_regular;
 
     if (hand_tiles.tile_count == 13) {
         if (is_thirteen_orphans_wait(hand_tiles.standing_tiles, 13, &table_special)) {
-            spcial_waiting = true;
+            special_waiting = true;
         }
         else if (is_honors_and_knitted_tiles_wait(hand_tiles.standing_tiles, 13, &table_special)) {
-            spcial_waiting = true;
+            special_waiting = true;
         }
         else if (is_seven_pairs_wait(hand_tiles.standing_tiles, 13, &table_special)) {
-            spcial_waiting = true;
+            special_waiting = true;
         }
         else if (is_knitted_straight_wait(hand_tiles.standing_tiles, 13, &table_special)) {
-            spcial_waiting = true;
+            special_waiting = true;
         }
     }
     else if (hand_tiles.tile_count == 10) {
         if (is_knitted_straight_wait(hand_tiles.standing_tiles, 10, &table_special)) {
-            spcial_waiting = true;
+            special_waiting = true;
         }
     }
 
-    if (is_regular_wait(hand_tiles.standing_tiles, hand_tiles.tile_count, &table_basic)) {
-        basic_waiting = true;
+    if (is_regular_wait(hand_tiles.standing_tiles, hand_tiles.tile_count, &table_regular)) {
+        regular_waiting = true;
     }
 
     if (useful_table != nullptr) {
-        if (spcial_waiting && basic_waiting) {
-            std::transform(std::begin(table_special), std::end(table_special), std::begin(table_basic), std::begin(*useful_table),
+        if (special_waiting && regular_waiting) {
+            std::transform(std::begin(table_special), std::end(table_special), std::begin(table_regular), std::begin(*useful_table),
                 [](bool a, bool b) { return a || b; });
         }
-        else if (basic_waiting) {
-            memcpy(*useful_table, table_basic, sizeof(table_basic));
+        else if (regular_waiting) {
+            memcpy(*useful_table, table_regular, sizeof(table_regular));
         }
-        else if (spcial_waiting) {
+        else if (special_waiting) {
             memcpy(*useful_table, table_special, sizeof(table_special));
         }
     }
 
-    return (spcial_waiting || basic_waiting);
+    return (special_waiting || regular_waiting);
 }
 
 #ifdef MAHJONG_ALGORITHM_ENABLE_SHANTEN

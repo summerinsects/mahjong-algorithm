@@ -333,8 +333,6 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
 intptr_t tiles_to_string(const tile_t *tiles, intptr_t tile_cnt, char *str, intptr_t max_size) {
     char *p = str, *end = str + max_size;
 
-    static const char suffix[] = "msp";
-    static const char honor_text[] = "ESWNCFP";
     suit_t last_suit = 0;
     for (intptr_t i = 0; i < tile_cnt && p < end; ++i) {
         tile_t t = tiles[i];
@@ -344,7 +342,7 @@ intptr_t tiles_to_string(const tile_t *tiles, intptr_t tile_cnt, char *str, intp
             if (r >= 1 && r <= 9) {  // 有效范围1-9
                 if (last_suit != s && last_suit != 0) {  // 花色变了，加后缀
                     if (last_suit != 4) {
-                        *p++ = suffix[last_suit - 1];
+                        *p++ = s_suffix_chars[last_suit - 1];
                     }
                 }
                 if (p < end) {
@@ -357,11 +355,11 @@ intptr_t tiles_to_string(const tile_t *tiles, intptr_t tile_cnt, char *str, intp
             if (r >= 1 && r <= 7) {  // 有效范围1-7
                 if (last_suit != s && last_suit != 0) {  // 花色变了，加后缀
                     if (last_suit != 4) {
-                        *p++ = suffix[last_suit - 1];
+                        *p++ = s_suffix_chars[last_suit - 1];
                     }
                 }
                 if (p < end) {
-                    *p++ = honor_text[r - 1];  // 直接写入字牌相应字母
+                    *p++ = s_honor_chars[r - 1];  // 直接写入字牌相应字母
                     last_suit = s;
                 }
             }
@@ -370,7 +368,7 @@ intptr_t tiles_to_string(const tile_t *tiles, intptr_t tile_cnt, char *str, intp
 
     // 写入过且还有空间，补充后缀
     if (p != str && p < end && (last_suit != 4)) {
-        *p++ = suffix[last_suit - 1];
+        *p++ = s_suffix_chars[last_suit - 1];
     }
 
     if (p < end) {

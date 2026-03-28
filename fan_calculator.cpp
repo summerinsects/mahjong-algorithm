@@ -993,7 +993,7 @@ static void check_seven_pairs_waiting(const tile_table_t &standing_table, tile_t
 }
 
 // 获取搭子听牌
-static void get_ragular_pack_waiting(const tile_table_t &tile_table, tile_table_t &waiting_table) {
+static void get_regular_pack_waiting(const tile_table_t &tile_table, tile_table_t &waiting_table) {
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -1044,7 +1044,7 @@ static void check_regular_waiting(tile_table_t &tile_table, intptr_t tile_cnt, e
 
             // 削减雀头，获取搭子的听牌
             tile_table[t] -= 2;
-            get_ragular_pack_waiting(tile_table, waiting_table);
+            get_regular_pack_waiting(tile_table, waiting_table);
             // 还原
             tile_table[t] += 2;
         }

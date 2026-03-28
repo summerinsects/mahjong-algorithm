@@ -306,7 +306,7 @@ UNUSED static const char *fan_name[] = {
 #define __UTF8_TEXT(quote) quote
 #endif
 #endif
-    
+
 #ifndef __UTF8
 #define __UTF8(quote) __UTF8_TEXT(quote)
 #endif
