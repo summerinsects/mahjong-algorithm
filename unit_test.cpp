@@ -27,7 +27,7 @@ static int count_useful_tile(const tile_table_t &used_table, const useful_table_
 void test_wait(const char *str) {
     hand_tiles_t hand_tiles;
     tile_t serving_tile;
-    string_to_tiles(str, std::strlen(str), &hand_tiles, &serving_tile);
+    parse_hand_tiles(str, std::strlen(str), &hand_tiles, &serving_tile);
 
     std::cout << "----------------" << std::endl;
     std::puts(str);
@@ -35,11 +35,10 @@ void test_wait(const char *str) {
     bool is_wait = mahjong::is_waiting(hand_tiles, &useful_table);
     if (is_wait) {
         std::puts(" waiting:");
-        char buf[64];
-        for (tile_t t = TILE_1m; t < TILE_TABLE_SIZE; ++t) {
+        for (int i = 0; i < 34; ++i) {
+            tile_t t = standard_tiles<>::all[i];
             if (useful_table[t]) {
-                tiles_to_string(&t, 1, buf, sizeof(buf));
-                std::printf("%s ", buf);
+                std::printf("%s ", tile_name<>::text[i]);
             }
         }
     }
@@ -52,7 +51,7 @@ void test_wait(const char *str) {
 void test_points(const char *str, win_flag_t win_flag, wind_t prevalent_wind, wind_t seat_wind) {
     calculate_param_t param;
 
-    long ret = string_to_tiles(str, std::strlen(str), &param.hand_tiles, &param.win_tile);
+    int ret = parse_hand_tiles(str, std::strlen(str), &param.hand_tiles, &param.win_tile);
     if (ret != PARSE_NO_ERROR) {
         std::printf("error at line %d error = %ld\n", __LINE__, ret);
         return;
@@ -94,7 +93,7 @@ void test_points(const char *str, win_flag_t win_flag, wind_t prevalent_wind, wi
 void test_shanten(const char *str) {
     hand_tiles_t hand_tiles;
     tile_t serving_tile;
-    long ret = string_to_tiles(str, std::strlen(str), &hand_tiles, &serving_tile);
+    int ret = parse_hand_tiles(str, std::strlen(str), &hand_tiles, &serving_tile);
     if (ret != 0) {
         std::printf("error at line %d error = %ld\n", __LINE__, ret);
         return;
@@ -105,11 +104,10 @@ void test_shanten(const char *str) {
     std::puts(buf);
 
     auto display = [](const hand_tiles_t *hand_tiles, useful_table_t &useful_table) {
-        char buf[64];
-        for (tile_t t = TILE_1m; t < TILE_TABLE_SIZE; ++t) {
+        for (int i = 0; i < 34; ++i) {
+            tile_t t = standard_tiles<>::all[i];
             if (useful_table[t]) {
-                tiles_to_string(&t, 1, buf, sizeof(buf));
-                std::printf("%s ", buf);
+                std::printf("%s ", tile_name<>::text[i]);
             }
         }
 

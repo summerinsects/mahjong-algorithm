@@ -67,10 +67,6 @@
 
 namespace mahjong {
 
-#if 0  // Debug
-extern intptr_t packs_to_string(const pack_t *packs, intptr_t pack_cnt, char *str, intptr_t max_size);
-#endif
-
 // 对牌进行打表
 static void map_tiles(const tile_t *tiles, intptr_t cnt, tile_table_t &tile_table) {
     for (intptr_t i = 0; i < cnt; ++i) {
@@ -2431,9 +2427,7 @@ int calculate_fan(const calculate_param_t *calculate_param, fan_table_t *fan_tab
             // 遍历各种划分方式，分别算番，找出最大的番的划分方式
             for (intptr_t i = 0; i < result.count; ++i) {
 #if 0  // Debug
-                char str[64];
-                packs_to_string(result.divisions[i].packs, 5, str, sizeof(str));
-                std::puts(str);
+                // print division
 #endif
                 fan_table_t &current_table = fan_tables[i];
                 calculate_regular_fan(result.divisions[i].packs, fixed_table, standing_table, unique_tiles, unique_cnt,

@@ -51,6 +51,27 @@ using std::size_t;
  * @{
  */
 
+template <class Dummy = int>
+struct tile_name {
+    static const char *text[34];
+    static const char suffix[3];
+    static const char honor[7];
+};
+
+template <class Dummy>
+const char *tile_name<Dummy>::text[] = {
+    "1m", "2m", "3m", "4m", "5m", "6m", "7m", "8m", "9m",
+    "1s", "2s", "3s", "4s", "5s", "6s", "7s", "8s", "9s",
+    "1p", "2p", "3p", "4p", "5p", "6p", "7p", "8p", "9p",
+    "E" , "S" , "W" , "N" , "C" , "F" , "P"
+};
+
+template <class Dummy>
+const char tile_name<Dummy>::suffix[] = { 'm', 's', 'p' };
+
+template <class Dummy>
+const char tile_name<Dummy>::honor[] = { 'E', 'S', 'W', 'N', 'C', 'F', 'P' };
+
 /**
  * @name error codes
  * @{
@@ -70,16 +91,6 @@ using std::size_t;
   */
 
 /**
- * @brief 解析牌
- * @param [in] str 字符串
- * @param [in] len 字符串长度
- * @param [out] tiles 牌
- * @retval > 0 实际牌的数量
- * @retval == 0 失败
- */
-intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles);
-
-/**
  * @brief 字符串转换为手牌结构和上牌
  * @param [in] str 字符串
  * @param [in] len 字符串长度
@@ -94,36 +105,16 @@ intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles);
  * @retval PARSE_ERROR_TOO_MANY_TILES 过多牌
  * @retval PARSE_ERROR_TILE_COUNT_GREATER_THAN_4 某张牌出现超过4枚
  */
-intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, tile_t *serving_tile);
-
-/**
- * @brief 牌转换为字符串
- * @param [in] tiles 牌
- * @param [in] tile_cnt 牌的数量
- * @param [out] str 字符串
- * @param [in] max_size 字符串最大长度
- * @return intptr_t 写入的字符串数
- */
-intptr_t tiles_to_string(const tile_t *tiles, intptr_t tile_cnt, char *str, intptr_t max_size);
-
-/**
- * @brief 牌组转换为字符串
- * @param [in] packs 牌组
- * @param [in] pack_cnt 牌组的数量
- * @param [out] str 字符串
- * @param [in] max_size 字符串最大长度
- * @return intptr_t 写入的字符串数
- */
-intptr_t packs_to_string(const pack_t *packs, intptr_t pack_cnt, char *str, intptr_t max_size);
+int parse_hand_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, tile_t *serving_tile);
 
 /**
  * @brief 手牌结构转换为字符串
  * @param [in] hand_tiles 手牌结构
  * @param [out] str 字符串
- * @param [in] max_size 字符串最大长度
- * @return intptr_t 写入的字符串数
+ * @param [in] max_size 字符串最大长度（注意：转换结果包含\0在内最长为35）
+ * @return size_t 字符串长度
  */
-intptr_t hand_tiles_to_string(const hand_tiles_t *hand_tiles, char *str, intptr_t max_size);
+size_t hand_tiles_to_string(const hand_tiles_t *hand_tiles, char *str, size_t max_size);
 
 /**
  * end group
