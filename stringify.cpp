@@ -213,7 +213,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
             if (in_brackets) {
                 return PARSE_ERROR_ILLEGAL_CHARACTER;
             }
-            if (pack_cnt > 4) {
+            if (pack_cnt >= 4) {
                 return PARSE_ERROR_TOO_MANY_FIXED_PACKS;
             }
             if (digit_cnt != 0) {
