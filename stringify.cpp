@@ -21,7 +21,7 @@
  ****************************************************************************/
 
 #include "stringify.h"
-#include <string.h>
+#include <cstring>
 #include <algorithm>
 #include <iterator>
 
@@ -49,7 +49,7 @@ static void submit_suit(const tile_t *digit_tiles, intptr_t digit_cnt, uint8_t s
 }
 
 intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles) {
-    //if (strspn(str, "123456789mpsESWNCFP") != strlen(str)) {
+    //if (std::strspn(str, "123456789mpsESWNCFP") != std::strlen(str)) {
     //    return PARSE_ERROR_ILLEGAL_CHARACTER;
     //}
 
@@ -61,7 +61,7 @@ intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles) {
     for (size_t k = 0; k < len; ++k) {
         char c = str[k];
 
-        const char *p = strchr(s_digit_chars, c);
+        const char *p = std::strchr(s_digit_chars, c);
         if (p != nullptr) {
             if (digit_cnt + cnt < max_cnt) {
                 digit_tiles[digit_cnt++] = *p - '0';
@@ -70,7 +70,7 @@ intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles) {
             continue;
         }
 
-        p = strchr(s_suffix_chars, c);
+        p = std::strchr(s_suffix_chars, c);
         if (p != nullptr) {
             if (digit_cnt == 0) {
                 return PARSE_ERROR_SUFFIX;
@@ -83,7 +83,7 @@ intptr_t parse_tiles(const char *str, size_t len, tile_t *tiles) {
             continue;
         }
 
-        p = strchr(s_honor_chars, c);
+        p = std::strchr(s_honor_chars, c);
         if (p != nullptr) {
             if (digit_cnt != 0) {
                 return PARSE_ERROR_SUFFIX;
@@ -171,7 +171,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
     for (size_t k = 0; k < len; ++k) {
         char c = str[k];
 
-        const char *p = strchr(s_digit_chars, c);
+        const char *p = std::strchr(s_digit_chars, c);
         if (p != nullptr) {
             if (digit_cnt < max_cnt) {
                 digit_tiles[digit_cnt++] = *p - '0';
@@ -180,7 +180,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
             continue;
         }
 
-        p = strchr(s_suffix_chars, c);
+        p = std::strchr(s_suffix_chars, c);
         if (p != nullptr) {
             if (digit_cnt == 0) {
                 return PARSE_ERROR_SUFFIX;
@@ -197,7 +197,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
             continue;
         }
 
-        p = strchr(s_honor_chars, c);
+        p = std::strchr(s_honor_chars, c);
         if (p != nullptr) {
             if (digit_cnt != 0) {
                 return PARSE_ERROR_SUFFIX;
@@ -230,7 +230,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
                 }
 
                 // 放到立牌中
-                memcpy(&standing_tiles[standing_cnt], temp_tiles, temp_cnt * sizeof(tile_t));
+                std::memcpy(&standing_tiles[standing_cnt], temp_tiles, temp_cnt * sizeof(tile_t));
                 standing_cnt += temp_cnt;
                 temp_cnt = 0;
             }
@@ -297,7 +297,7 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
         }
 
         // 放到立牌中
-        memcpy(&standing_tiles[standing_cnt], temp_tiles, temp_cnt * sizeof(tile_t));
+        std::memcpy(&standing_tiles[standing_cnt], temp_tiles, temp_cnt * sizeof(tile_t));
         standing_cnt += temp_cnt;
     }
 
@@ -313,16 +313,16 @@ intptr_t string_to_tiles(const char *str, size_t len, hand_tiles_t *hand_tiles, 
     // 无错误时再写回数据
     tile_t last_tile = 0;
     if (standing_cnt == max_cnt) {
-        memcpy(hand_tiles->standing_tiles, standing_tiles, (max_cnt - 1) * sizeof(tile_t));
+        std::memcpy(hand_tiles->standing_tiles, standing_tiles, (max_cnt - 1) * sizeof(tile_t));
         hand_tiles->tile_count = max_cnt - 1;
         last_tile = standing_tiles[max_cnt - 1];
     }
     else {
-        memcpy(hand_tiles->standing_tiles, standing_tiles, standing_cnt * sizeof(tile_t));
+        std::memcpy(hand_tiles->standing_tiles, standing_tiles, standing_cnt * sizeof(tile_t));
         hand_tiles->tile_count = standing_cnt;
     }
 
-    memcpy(hand_tiles->fixed_packs, packs, pack_cnt * sizeof(pack_t));
+    std::memcpy(hand_tiles->fixed_packs, packs, pack_cnt * sizeof(pack_t));
     hand_tiles->pack_count = pack_cnt;
     *serving_tile = last_tile;
 

@@ -21,8 +21,8 @@
  ****************************************************************************/
 
 #include "shanten.h"
-#include <assert.h>
-#include <string.h>
+#include <cassert>
+#include <cstring>
 #include <limits>
 #include <algorithm>
 #include <iterator>
@@ -76,7 +76,7 @@ intptr_t packs_to_tiles(const pack_t *packs, intptr_t pack_cnt, tile_t *tiles, i
 
 // 将牌打表
 void map_tiles(const tile_t *tiles, intptr_t cnt, tile_table_t *tile_table) {
-    memset(*tile_table, 0, sizeof(*tile_table));
+    std::memset(*tile_table, 0, sizeof(*tile_table));
     for (intptr_t i = 0; i < cnt; ++i) {
         ++(*tile_table)[tiles[i]];
     }
@@ -94,12 +94,12 @@ bool map_hand_tiles(const hand_tiles_t *hand_tiles, tile_table_t *tile_table) {
     tile_t tiles[18];
     intptr_t tile_cnt = 0;
     if (hand_tiles->pack_count == 0) {
-        memcpy(tiles, hand_tiles->standing_tiles, 13 * sizeof(tile_t));
+        std::memcpy(tiles, hand_tiles->standing_tiles, 13 * sizeof(tile_t));
         tile_cnt = 13;
     }
     else {
         tile_cnt = packs_to_tiles(hand_tiles->fixed_packs, hand_tiles->pack_count, tiles, 18);
-        memcpy(tiles + tile_cnt, hand_tiles->standing_tiles, hand_tiles->tile_count * sizeof(tile_t));
+        std::memcpy(tiles + tile_cnt, hand_tiles->standing_tiles, hand_tiles->tile_count * sizeof(tile_t));
         tile_cnt += hand_tiles->tile_count;
     }
 
@@ -344,7 +344,7 @@ int regular_shanten(const tile_t *standing_tiles, intptr_t standing_cnt, useful_
     map_tiles(standing_tiles, standing_cnt, &tile_table);
 
     if (useful_table != nullptr) {
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
     }
     return regular_shanten_from_table(tile_table, (13 - standing_cnt) / 3, useful_table);
 }
@@ -520,7 +520,7 @@ bool is_regular_wait(const tile_t *standing_tiles, intptr_t standing_cnt, useful
     map_tiles(standing_tiles, standing_cnt, &tile_table);
 
     if (waiting_table != nullptr) {
-        memset(*waiting_table, 0, sizeof(*waiting_table));
+        std::memset(*waiting_table, 0, sizeof(*waiting_table));
     }
     return is_regular_wait_recursively(tile_table, standing_cnt, 0, waiting_table);
 }
@@ -640,7 +640,7 @@ bool is_seven_pairs_wait(const tile_t *standing_tiles, intptr_t standing_cnt, us
 
     useful_table_t useful_table;
     if (0 == seven_pairs_shanten(standing_tiles, standing_cnt, &useful_table)) {
-        memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
+        std::memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
         return true;
     }
     return false;
@@ -683,7 +683,7 @@ STATIC_IF_NECESSARY int thirteen_orphans_shanten(const tile_t *standing_tiles, i
 
     if (useful_table != nullptr) {
         // 先标记所有的幺九牌为有效牌
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
         std::for_each(std::begin(standard_thirteen_orphans), std::end(standard_thirteen_orphans),
             [useful_table](tile_t t) {
             (*useful_table)[t] = true;
@@ -713,7 +713,7 @@ bool is_thirteen_orphans_wait(const tile_t *standing_tiles, intptr_t standing_cn
 
     useful_table_t useful_table;
     if (0 == thirteen_orphans_shanten(standing_tiles, standing_cnt, &useful_table)) {
-        memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
+        std::memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
         return true;
     }
     return false;
@@ -753,12 +753,12 @@ static bool is_knitted_straight_wait_from_table(const tile_table_t &tile_table, 
     }
 
     if (waiting_table != nullptr) {
-        memset(*waiting_table, 0, sizeof(*waiting_table));
+        std::memset(*waiting_table, 0, sizeof(*waiting_table));
     }
 
     // 剔除组合龙
     tile_table_t temp_table;
-    memcpy(&temp_table, &tile_table, sizeof(temp_table));
+    std::memcpy(&temp_table, &tile_table, sizeof(temp_table));
     for (int i = 0; i < 9; ++i) {
         tile_t t = (*matched_seq)[i];
         if (temp_table[t]) {
@@ -803,7 +803,7 @@ static int regular_shanten_specified(const tile_table_t &tile_table, const tile_
     intptr_t fixed_cnt, useful_table_t *useful_table) {
 
     tile_table_t temp_table;
-    memcpy(&temp_table, &tile_table, sizeof(temp_table));
+    std::memcpy(&temp_table, &tile_table, sizeof(temp_table));
     int exist_cnt = 0;
 
     // 统计主番的牌
@@ -818,7 +818,7 @@ static int regular_shanten_specified(const tile_table_t &tile_table, const tile_
 
     // 记录有效牌
     if (useful_table != nullptr) {
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
 
         // 统计主番缺失的牌
         for (int i = 0; i < main_cnt; ++i) {
@@ -851,7 +851,7 @@ int knitted_straight_shanten(const tile_t *standing_tiles, intptr_t standing_cnt
 
     // 需要获取有效牌时，计算上听数的同时就获取有效牌了
     if (useful_table != nullptr) {
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
 
         useful_table_t temp_table;
 
@@ -861,7 +861,7 @@ int knitted_straight_shanten(const tile_t *standing_tiles, intptr_t standing_cnt
             int st = regular_shanten_specified(tile_table, standard_knitted_straight[i], 9, fixed_cnt, &temp_table);
             if (st < ret) {  // 上听数小的，直接覆盖数据
                 ret = st;
-                memcpy(*useful_table, temp_table, sizeof(*useful_table));  // 直接覆盖原来的有效牌数据
+                std::memcpy(*useful_table, temp_table, sizeof(*useful_table));  // 直接覆盖原来的有效牌数据
             }
             else if (st == ret) {  // 两种不同组合龙上听数如果相等的话，直接合并有效牌
                 std::transform(std::begin(*useful_table), std::end(*useful_table), std::begin(temp_table),
@@ -939,7 +939,7 @@ static int honors_and_knitted_tiles_shanten_1(const tile_t *standing_tiles, intp
 
     // 记录有效牌
     if (useful_table != nullptr) {
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
 
         // 统计组合龙部分缺失的数牌
         for (int i = 0; i < 9; ++i) {
@@ -970,7 +970,7 @@ STATIC_IF_NECESSARY int honors_and_knitted_tiles_shanten(const tile_t *standing_
 
     // 需要获取有效牌时，计算上听数的同时就获取有效牌了
     if (useful_table != nullptr) {
-        memset(*useful_table, 0, sizeof(*useful_table));
+        std::memset(*useful_table, 0, sizeof(*useful_table));
 
         useful_table_t temp_table;
 
@@ -979,7 +979,7 @@ STATIC_IF_NECESSARY int honors_and_knitted_tiles_shanten(const tile_t *standing_
             int st = honors_and_knitted_tiles_shanten_1(standing_tiles, standing_cnt, i, &temp_table);
             if (st < ret) {  // 上听数小的，直接覆盖数据
                 ret = st;
-                memcpy(*useful_table, temp_table, sizeof(*useful_table));  // 直接覆盖原来的有效牌数据
+                std::memcpy(*useful_table, temp_table, sizeof(*useful_table));  // 直接覆盖原来的有效牌数据
             }
             else if (st == ret) {  // 两种不同组合龙上听数如果相等的话，直接合并有效牌
                 std::transform(std::begin(*useful_table), std::end(*useful_table), std::begin(temp_table),
@@ -1008,7 +1008,7 @@ bool is_honors_and_knitted_tiles_wait(const tile_t *standing_tiles, intptr_t sta
 
     useful_table_t useful_table;
     if (0 == honors_and_knitted_tiles_shanten(standing_tiles, standing_cnt, &useful_table)) {
-        memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
+        std::memcpy(*waiting_table, useful_table, sizeof(*waiting_table));
         return true;
     }
     return false;
@@ -1059,10 +1059,10 @@ bool is_waiting(const hand_tiles_t &hand_tiles, useful_table_t *useful_table) {
                 [](bool a, bool b) { return a || b; });
         }
         else if (regular_waiting) {
-            memcpy(*useful_table, table_regular, sizeof(table_regular));
+            std::memcpy(*useful_table, table_regular, sizeof(table_regular));
         }
         else if (special_waiting) {
-            memcpy(*useful_table, table_special, sizeof(table_special));
+            std::memcpy(*useful_table, table_special, sizeof(table_special));
         }
     }
 
@@ -1158,7 +1158,7 @@ void enum_discard_tile(const hand_tiles_t *hand_tiles, tile_t serving_tile, uint
 
     // 复制一份手牌
     hand_tiles_t temp;
-    memcpy(&temp, hand_tiles, sizeof(temp));
+    std::memcpy(&temp, hand_tiles, sizeof(temp));
 
     // 依次尝试打手中的立牌
     for (int i = 0; i < 34; ++i) {

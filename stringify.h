@@ -27,6 +27,8 @@
 
 namespace mahjong {
 
+using std::size_t;
+
 /**
  * @brief 字符串格式：
  * - 数牌：万=m 条=s 饼=p。后缀使用小写字母，一连串同花色的数牌可合并使用用一个后缀，如123m、678s等等。

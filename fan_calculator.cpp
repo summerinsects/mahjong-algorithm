@@ -21,9 +21,9 @@
  ****************************************************************************/
 
 #include "fan_calculator.h"
-#include <assert.h>
-#include <stddef.h>
-#include <string.h>
+#include <cassert>
+#include <cstddef>
+#include <cstring>
 #include <algorithm>
 #include <iterator>
 #include "standard_tiles.h"
@@ -59,7 +59,7 @@
 #define MAX_DIVISION_CNT 20  // 一副牌最多也没有20种划分吧，够用了
 
 #if 0
-#define LOG(fmt_, ...) printf(fmt_, ##__VA_ARGS__)
+#define LOG(fmt_, ...) std::printf(fmt_, ##__VA_ARGS__)
 #else
 #define LOG(...) ((void)0)
 #endif
@@ -143,7 +143,7 @@ static void divide_tail_add_division(intptr_t fixed_cnt, const division_t *work_
     // 拷贝一份当前的划分出来的面子，并排序暗手的面子
     // 这里不能直接在work_division->packs上排序，否则会破坏递归外层的数据
     division_t temp;
-    memcpy(&temp, work_division, sizeof(temp));
+    std::memcpy(&temp, work_division, sizeof(temp));
     if (fixed_cnt < 4) {
         std::sort(temp.packs + fixed_cnt, temp.packs + 4);
     }
@@ -154,7 +154,7 @@ static void divide_tail_add_division(intptr_t fixed_cnt, const division_t *work_
         return std::equal(&od.packs[fixed_cnt], &od.packs[4], &temp.packs[fixed_cnt]);
     })) {
         // 写入划分结果里
-        memcpy(&result->divisions[result->count], &temp, sizeof(temp));
+        std::memcpy(&result->divisions[result->count], &temp, sizeof(temp));
         ++result->count;
     }
     else {
@@ -267,7 +267,7 @@ static bool divide_win_hand(tile_table_t &standing_table, const pack_t *fixed_pa
 
     // 复制副露的面子
     division_t work_division;
-    memcpy(work_division.packs, fixed_packs, fixed_cnt * sizeof(pack_t));
+    std::memcpy(work_division.packs, fixed_packs, fixed_cnt * sizeof(pack_t));
     return divide_recursively(standing_table, fixed_cnt, 0, 0, &work_division, result);
 }
 
@@ -1125,7 +1125,7 @@ static bool is_unique_waiting(tile_table_t &standing_table, intptr_t tile_cnt, t
 
 // 根据和牌方式调整——涉及番种：不求人、全求人
 static void adjust_by_self_drawn(const pack_t (&packs)[5], intptr_t fixed_cnt, bool self_drawn, fan_table_t &fan_table) {
-    ptrdiff_t melded_cnt = std::count_if(&packs[0], &packs[fixed_cnt], &is_pack_melded);  // 明副露的组数
+    std::ptrdiff_t melded_cnt = std::count_if(&packs[0], &packs[fixed_cnt], &is_pack_melded);  // 明副露的组数
 
     switch (melded_cnt) {
     case 0:  // 0组明的，自摸为不求人，点和为门前清
@@ -1891,14 +1891,14 @@ static bool calculate_knitted_straight_fan(const tile_table_t &fixed_table, cons
 
     // 剔除组合龙
     tile_table_t tile_table;
-    memcpy(tile_table, standing_table, sizeof(tile_table));
+    std::memcpy(tile_table, standing_table, sizeof(tile_table));
     std::for_each(std::begin(*matched_seq), std::end(*matched_seq), [&tile_table](tile_t t) { --tile_table[t]; });
 
     // 按基本和型划分
     division_result_t result;
     result.count = 0;
     division_t work_division;
-    memset(&work_division, 0, sizeof(work_division));
+    std::memset(&work_division, 0, sizeof(work_division));
 
     // 此处逻辑为：将组合龙9张牌当作是已经完成的3组面子，空出0 1 2下标处的3组
     // 如果第4组是副露的，将其放在下标3处
@@ -2420,7 +2420,7 @@ int calculate_fan(const calculate_param_t *calculate_param, fan_table_t *fan_tab
 #if 0  // Debug
                 char str[64];
                 packs_to_string(result.divisions[i].packs, 5, str, sizeof(str));
-                puts(str);
+                std::puts(str);
 #endif
                 fan_table_t &current_table = fan_tables[i];
                 calculate_regular_fan(result.divisions[i].packs, fixed_table, standing_table, unique_tiles, unique_cnt,
@@ -2441,7 +2441,7 @@ int calculate_fan(const calculate_param_t *calculate_param, fan_table_t *fan_tab
             }
 
             if (fan_table != nullptr && selected_fan_table != nullptr) {
-                memcpy(tmp_table, *selected_fan_table, sizeof(tmp_table));
+                std::memcpy(tmp_table, *selected_fan_table, sizeof(tmp_table));
             }
         }
     }
@@ -2454,7 +2454,7 @@ int calculate_fan(const calculate_param_t *calculate_param, fan_table_t *fan_tab
     max_fan += calculate_param->flower_count;
 
     if (fan_table != nullptr) {
-        memcpy(*fan_table, tmp_table, sizeof(*fan_table));
+        std::memcpy(*fan_table, tmp_table, sizeof(*fan_table));
         (*fan_table)[FLOWER_TILES] = calculate_param->flower_count;
     }
 

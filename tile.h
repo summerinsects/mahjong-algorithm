@@ -23,8 +23,8 @@
 #ifndef __MAHJONG_ALGORITHM__TILE_H__
 #define __MAHJONG_ALGORITHM__TILE_H__
 
-#include <stddef.h>
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
  // force inline
 #ifndef FORCE_INLINE
@@ -49,6 +49,12 @@
 #endif
 
 namespace mahjong {
+
+using std::uint8_t;
+using std::uint16_t;
+using std::uint32_t;
+
+using std::intptr_t;
 
 /**
  * @brief 代码注释中用到的术语简介
