@@ -26,7 +26,6 @@
 #include <limits>
 #include <algorithm>
 #include <iterator>
-#include "standard_tiles.h"
 
 #ifdef MAHJONG_ALGORITHM_ENABLE_SHANTEN
 #define STATIC_IF_NECESSARY
@@ -111,6 +110,7 @@ bool map_hand_tiles(const hand_tiles_t *hand_tiles, tile_table_t *tile_table) {
 // 将表转换成牌
 intptr_t table_to_tiles(const tile_table_t &tile_table, tile_t *tiles, intptr_t max_cnt) {
     intptr_t cnt = 0;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         for (int n = 0; n < tile_table[t]; ++n) {
@@ -135,6 +135,7 @@ intptr_t table_to_tiles(const tile_table_t &tile_table, tile_t *tiles, intptr_t 
 // 从0到fixed_cnt的数据是不使用的，这些保留给了副露的面子
 static int regular_shanten_recursively(tile_table_t &tile_table, const bool has_pair, const unsigned pack_cnt, const unsigned partner_cnt,
     const intptr_t fixed_cnt, eigen_t pack_eigen, eigen_t partner_eigen) {
+    const auto &all_tiles = standard_tiles<>::all;
     if (fixed_cnt == 4) {  // 4副露
         for (int i = 0; i < 34; ++i) {
             tile_t t = all_tiles[i];
@@ -307,6 +308,7 @@ static int regular_shanten_from_table(tile_table_t &tile_table, intptr_t fixed_c
     }
 
     // 穷举所有的牌，获取能减少上听数的牌
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] == 4 && result > 0) {
@@ -353,6 +355,7 @@ int regular_shanten(const tile_t *standing_tiles, intptr_t standing_cnt, useful_
 
 // 基本和型判断1张是否听牌
 static bool is_regular_wait_1(tile_table_t &tile_table, useful_table_t *waiting_table) {
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] != 1) {
@@ -377,6 +380,7 @@ static bool is_regular_wait_1(tile_table_t &tile_table, useful_table_t *waiting_
 // 基本和型判断2张是否听牌
 static bool is_regular_wait_2(const tile_table_t &tile_table, useful_table_t *waiting_table) {
     bool ret = false;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -424,6 +428,7 @@ static bool is_regular_wait_2(const tile_table_t &tile_table, useful_table_t *wa
 static bool is_regular_wait_4(tile_table_t &tile_table, useful_table_t *waiting_table) {
     bool ret = false;
     // 削减雀头
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 2) {
@@ -458,6 +463,7 @@ static bool is_regular_wait_recursively(tile_table_t &tile_table, intptr_t left_
         }
     }
 
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -546,6 +552,7 @@ static bool is_regular_win_recursively(tile_table_t &tile_table, intptr_t left_c
         return is_regular_win_2(tile_table);
     }
 
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -665,6 +672,7 @@ STATIC_IF_NECESSARY int thirteen_orphans_shanten(const tile_t *standing_tiles, i
     tile_table_t tile_table;
     map_tiles(standing_tiles, standing_cnt, &tile_table);
 
+    const auto &standard_thirteen_orphans = standard_tiles<>::thirteen_orphans;
     bool has_pair = false;
     int cnt = 0;
     for (int i = 0; i < 13; ++i) {
@@ -731,6 +739,7 @@ bool is_thirteen_orphans_win(const tile_t *standing_tiles, intptr_t standing_cnt
 // 以表格为参数计算组合龙是否听牌
 static bool is_knitted_straight_wait_from_table(const tile_table_t &tile_table, intptr_t left_cnt, useful_table_t *waiting_table) {
     // 匹配组合龙
+    const auto &standard_knitted_straight = standard_tiles<>::knitted_straight;
     const tile_t (*matched_seq)[9] = nullptr;
     tile_t missing_tiles[9];
     int missing_cnt = 0;
@@ -850,6 +859,7 @@ int knitted_straight_shanten(const tile_t *standing_tiles, intptr_t standing_cnt
     int ret = std::numeric_limits<int>::max();
 
     // 需要获取有效牌时，计算上听数的同时就获取有效牌了
+    const auto &standard_knitted_straight = standard_tiles<>::knitted_straight;
     if (useful_table != nullptr) {
         std::memset(*useful_table, 0, sizeof(*useful_table));
 
@@ -920,6 +930,7 @@ static int honors_and_knitted_tiles_shanten_1(const tile_t *standing_tiles, intp
     int cnt = 0;
 
     // 统计组合龙部分的数牌
+    const auto &standard_knitted_straight = standard_tiles<>::knitted_straight;
     for (int i = 0; i < 9; ++i) {
         tile_t t = standard_knitted_straight[which_seq][i];
         int n = tile_table[t];
@@ -929,6 +940,7 @@ static int honors_and_knitted_tiles_shanten_1(const tile_t *standing_tiles, intp
     }
 
     // 统计字牌
+    const auto &standard_thirteen_orphans = standard_tiles<>::thirteen_orphans;
     for (int i = 6; i < 13; ++i) {
         tile_t t = standard_thirteen_orphans[i];
         int n = tile_table[t];
@@ -1161,6 +1173,7 @@ void enum_discard_tile(const hand_tiles_t *hand_tiles, tile_t serving_tile, uint
     std::memcpy(&temp, hand_tiles, sizeof(temp));
 
     // 依次尝试打手中的立牌
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] && t != serving_tile && tile_table[serving_tile] < 4) {

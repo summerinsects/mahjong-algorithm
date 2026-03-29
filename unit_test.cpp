@@ -14,6 +14,7 @@ using namespace mahjong;
 
 static int count_useful_tile(const tile_table_t &used_table, const useful_table_t &useful_table) {
     int cnt = 0;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (useful_table[t]) {

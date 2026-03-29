@@ -26,7 +26,6 @@
 #include <cstring>
 #include <algorithm>
 #include <iterator>
-#include "standard_tiles.h"
 
 /**
  * 算番流程概述：
@@ -108,6 +107,7 @@ static void map_packs(const pack_t *packs, intptr_t cnt, tile_table_t &tile_tabl
 // 获取本手的唯一牌（用来快速检测花色、范围等相关番种）
 static intptr_t table_unique(const tile_table_t &fixed_table, const tile_table_t &standing_table, tile_t *tile) {
     tile_t *p = tile;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (fixed_table[t] || standing_table[t]) {
@@ -168,6 +168,7 @@ static void divide_tail_add_division(intptr_t fixed_cnt, const division_t *work_
 
 // 递归划分的最后一步
 static bool divide_tail(tile_table_t &tile_table, intptr_t fixed_cnt, division_t *work_division, division_result_t *result) {
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 2) {
@@ -200,6 +201,7 @@ static bool divide_recursively(tile_table_t &tile_table, intptr_t fixed_cnt, int
     bool ret = false;
 
     // 按牌表张遍历牌
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -249,6 +251,7 @@ static bool divide_recursively(tile_table_t &tile_table, intptr_t fixed_cnt, int
 }
 
 static bool has_pair(const tile_table_t &tile_table) {
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         if (tile_table[all_tiles[i]] > 1) {
             return true;
@@ -973,6 +976,7 @@ static bool is_three_suited_terminal_chows(const pack_t (&chow_packs)[4], pack_t
 // 检查七对听牌
 static void check_seven_pairs_waiting(const tile_table_t &standing_table, tile_table_t &waiting_table) {
     int pairs = 0;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         uint16_t cnt = standing_table[all_tiles[i]];
         // 成对的牌
@@ -994,6 +998,7 @@ static void check_seven_pairs_waiting(const tile_table_t &standing_table, tile_t
 
 // 获取搭子听牌
 static void get_regular_pack_waiting(const tile_table_t &tile_table, tile_table_t &waiting_table) {
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] < 1) {
@@ -1020,6 +1025,7 @@ static void get_regular_pack_waiting(const tile_table_t &tile_table, tile_table_
 
 // 检查基本和型听牌
 static void check_regular_waiting(tile_table_t &tile_table, intptr_t tile_cnt, eigen_t prev_eigen, tile_table_t &waiting_table) {
+    const auto &all_tiles = standard_tiles<>::all;
     // 1张牌必然听雀头
     if (tile_cnt == 1) {
         for (int i = 0; i < 34; ++i) {
@@ -1111,6 +1117,7 @@ static bool is_unique_waiting(tile_table_t &standing_table, intptr_t tile_cnt, t
     ++standing_table[win_tile];
 
     bool waiting = false;
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         if (waiting_table[all_tiles[i]]) {
             if (waiting) {
@@ -1880,6 +1887,7 @@ static bool calculate_knitted_straight_fan(const tile_table_t &fixed_table, cons
     }
 
     // 匹配组合龙
+    const auto &standard_knitted_straight = standard_tiles<>::knitted_straight;
     const tile_t (*matched_seq)[9] = std::find_if(&standard_knitted_straight[0], &standard_knitted_straight[6],
         [&standing_table](const tile_t (&seq)[9]) {
         return std::all_of(std::begin(seq), std::end(seq), [&standing_table](tile_t t) { return standing_table[t] > 0; });
@@ -2056,6 +2064,7 @@ static bool calculate_knitted_straight_fan(const tile_table_t &fixed_table, cons
 
 // 七对
 static bool is_seven_pairs(const tile_table_t &tile_table) {
+    const auto &all_tiles = standard_tiles<>::all;
     for (int i = 0; i < 34; ++i) {
         tile_t t = all_tiles[i];
         if (tile_table[t] & 1) {
@@ -2087,6 +2096,7 @@ static bool is_seven_shifted_pairs(const tile_table_t &tile_table, suit_t suit) 
 
 // 十三幺
 static FORCE_INLINE bool is_thirteen_orphans(const tile_t *unique_tiles, intptr_t unique_cnt) {
+    const auto &standard_thirteen_orphans = standard_tiles<>::thirteen_orphans;
     return unique_cnt == 13 && std::equal(standard_thirteen_orphans, standard_thirteen_orphans + 13, unique_tiles);
 }
 
@@ -2104,6 +2114,7 @@ static bool calculate_honors_and_knitted_tiles(const tile_t *unique_tiles, intpt
     }
 
     // 匹配组合龙
+    const auto &standard_knitted_straight = standard_tiles<>::knitted_straight;
     if (std::none_of(&standard_knitted_straight[0], &standard_knitted_straight[6],
         [&unique_tiles, honor_begin](const tile_t (&seq)[9]) {
         return std::includes(std::begin(seq), std::end(seq), unique_tiles, honor_begin);
@@ -2111,6 +2122,7 @@ static bool calculate_honors_and_knitted_tiles(const tile_t *unique_tiles, intpt
         return false;
     }
 
+    const auto &standard_thirteen_orphans = standard_tiles<>::thirteen_orphans;
     if (numbered_cnt == 7 && std::equal(std::begin(standard_thirteen_orphans) + 6, std::end(standard_thirteen_orphans), unique_tiles + 7)) {
         // 七种字牌齐，为七星不靠
         fan_table[GREATER_HONORS_AND_KNITTED_TILES] = 1;
@@ -2309,6 +2321,7 @@ static bool calculate_nine_gates_fan(const tile_table_t &standing_table, tile_t 
 
 // 从番表计算番数
 static int get_fan_by_table(const fan_table_t &fan_table) {
+    const auto &fan_value_table = fan_value<>::table;
     int fan = 0;
     for (int i = 1; i < FAN_TABLE_SIZE; ++i) {
         if (fan_table[i] == 0) {
@@ -2317,10 +2330,10 @@ static int get_fan_by_table(const fan_table_t &fan_table) {
         fan += fan_value_table[i] * fan_table[i];
 #if 0  // Debug
         if (fan_table[i] == 1) {
-            LOG("%s %hu\n", fan_name[i], fan_value_table[i]);
+            LOG("%s %hu\n", fan_name<>::text[i], fan_value_table[i]);
         }
         else {
-            LOG("%s %hu*%hu\n", fan_name[i], fan_value_table[i], fan_table[i]);
+            LOG("%s %hu*%hu\n", fan_name<>::text[i], fan_value_table[i], fan_table[i]);
         }
 #endif
     }
@@ -2475,6 +2488,7 @@ static bool inevitably_concealed(const fan_table_t &fan_table) {
 
 // 撤销天地人和
 int revoke_blessings(fan_table_t &fan_table) {
+    const auto &fan_value_table = fan_value<>::table;
     if (fan_table[BLESSING_OF_HEAVEN]) {
         int res = fan_value_table[BLESSING_OF_HEAVEN];
         fan_table[BLESSING_OF_HEAVEN] = 0;

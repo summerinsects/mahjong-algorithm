@@ -171,15 +171,47 @@ enum tile_value_t {
     TILE_TABLE_SIZE
 };
 
+template <typename Dummy = int>
+struct standard_tiles {
+    static const tile_t all[34];  // 所有合法的牌，不包括花牌
+
+    static const tile_t thirteen_orphans[13];  // 十三幺13面听
+    static const tile_t knitted_straight[6][9];  // 组合龙只有6种
+};
+
 /**
  * @brief 所有合法的牌，不包括花牌
  */
-static const tile_t all_tiles[] = {
+template <typename Dummy>
+const tile_t standard_tiles<Dummy>::all[] = {
     TILE_1m, TILE_2m, TILE_3m, TILE_4m, TILE_5m, TILE_6m, TILE_7m, TILE_8m, TILE_9m,
     TILE_1s, TILE_2s, TILE_3s, TILE_4s, TILE_5s, TILE_6s, TILE_7s, TILE_8s, TILE_9s,
     TILE_1p, TILE_2p, TILE_3p, TILE_4p, TILE_5p, TILE_6p, TILE_7p, TILE_8p, TILE_9p,
     TILE_E , TILE_S , TILE_W , TILE_N , TILE_C , TILE_F , TILE_P
 };
+
+template <typename Dummy>
+const tile_t standard_tiles<Dummy>::thirteen_orphans[13] = {
+    TILE_1m, TILE_9m, TILE_1s, TILE_9s, TILE_1p, TILE_9p, TILE_E, TILE_S, TILE_W, TILE_N, TILE_C, TILE_F, TILE_P
+};
+
+// 组合龙只有如下6种
+// 147m 258s 369p
+// 147m 369s 258p
+// 258m 147s 369p
+// 258m 369s 147p
+// 369m 147s 258p
+// 369m 258s 147p
+template <typename Dummy>
+const tile_t standard_tiles<Dummy>::knitted_straight[6][9] = {
+    { TILE_1m, TILE_4m, TILE_7m, TILE_2s, TILE_5s, TILE_8s, TILE_3p, TILE_6p, TILE_9p },
+    { TILE_1m, TILE_4m, TILE_7m, TILE_3s, TILE_6s, TILE_9s, TILE_2p, TILE_5p, TILE_8p },
+    { TILE_2m, TILE_5m, TILE_8m, TILE_1s, TILE_4s, TILE_7s, TILE_3p, TILE_6p, TILE_9p },
+    { TILE_2m, TILE_5m, TILE_8m, TILE_3s, TILE_6s, TILE_9s, TILE_1p, TILE_4p, TILE_7p },
+    { TILE_3m, TILE_6m, TILE_9m, TILE_1s, TILE_4s, TILE_7s, TILE_2p, TILE_5p, TILE_8p },
+    { TILE_3m, TILE_6m, TILE_9m, TILE_2s, TILE_5s, TILE_8s, TILE_1p, TILE_4p, TILE_7p },
+};
+
 
 /**
  * @brief 牌表类型
