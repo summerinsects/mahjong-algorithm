@@ -175,8 +175,15 @@ template <typename Dummy = int>
 struct standard_tiles {
     static const tile_t all[34];  // 所有合法的牌，不包括花牌
 
+    static bool check(tile_t tile) {
+        return valid_map[tile >> 5] & (1u << (tile & 0x1f));
+    }
+
     static const tile_t thirteen_orphans[13];  // 十三幺13面听
     static const tile_t knitted_straight[6][9];  // 组合龙只有6种
+
+private:
+    static const uint32_t valid_map[8];
 };
 
 /**
@@ -210,6 +217,12 @@ const tile_t standard_tiles<Dummy>::knitted_straight[6][9] = {
     { TILE_2m, TILE_5m, TILE_8m, TILE_3s, TILE_6s, TILE_9s, TILE_1p, TILE_4p, TILE_7p },
     { TILE_3m, TILE_6m, TILE_9m, TILE_1s, TILE_4s, TILE_7s, TILE_2p, TILE_5p, TILE_8p },
     { TILE_3m, TILE_6m, TILE_9m, TILE_2s, TILE_5s, TILE_8s, TILE_1p, TILE_4p, TILE_7p },
+};
+
+// 用来辅助判断牌张是否合法的表
+template <typename Dummy>
+const uint32_t standard_tiles<Dummy>::valid_map[] = {
+    0x3fe0000u, 0x3fe03feu, 0xfeu
 };
 
 
